@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="description" content="Plot the 2-dimensional coordinate points in the axis, online tool.">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="LT_Gen_files/favicon_2dplot.ico" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <!--    <link rel="stylesheet" href="css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+
+    <!-- javascript pre load-->
+    <!--    <script src="js/konva.min.js"></script>-->
+    <script src="https://unpkg.com/konva@4.0.0/konva.min.js"></script>
+
+
+    <title>2D ploter online</title>
+
+</head>
+<body>
+
+
+
+<h1 style="margin-left: 2em;alignment: center">Hello, ploter!</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+
+
+            <h5>Plot the 2-dimensional sample points. </h5>
+            <p>Paste into the text area below and click 'Plot!'</p>
+            <p style="color: #cc0000">Note: Coordinates greater than ±1.99 will be out of the canvas!</p>
+
+            <div style="margin-left: 2em;">
+        <textarea id="inputCoord" name="coordinates_box" rows="12" cols="29">0,0
+0.5,0.5
+1.9,1.9
+-0.1,-0.1</textarea>
+
+
+                <p class="flat" style="margin-bottom: 0;"><input type="radio" id="label_at0" name="paragraphs" value="yes" checked="checked">label
+                    node from 0
+                </p>
+                <p class="flat"><input type="radio" id="label_at1" name="paragraphs" value="no">label node from 1</p>
+
+                <p><input type="button"
+                          name="Parsing-Line-Coord"
+                          value="Plot!"
+                          onclick="javascript:plot2d()"
+                          class="btn btn-info">
+
+                    <input type="button" name="clearCoord" id="clearCoord" value="Reset" class="btn btn-warning"></p>
+
+            </div>
+
+        </div>
+        <div id="myCanvas" style="background-color: #f0f0f0; width: 500px; height: 500px">
+
+            <!--                <div id="myCanvas" style="background-color: #f0f0f0; width: 500px; height: 500px"></div>-->
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- Optional JavaScript -->
+<script type="text/javascript">
+    //reset coord areas for 'web_LT/index.html'
+    var clr_btn = document.getElementById('clearCoord');
+    if (clr_btn) {
+        clr_btn.addEventListener("click", function () {
+            document.getElementById("inputCoord").value = "";
+            document.getElementById("outputCoord").value = "";
+            document.getElementById("inputCoord").focus();
+        });
+    }
+
+    //parse the coordinates
+    function plot2d() {
+        //parsing the checking mark
+        var inputText = document.getElementById("inputCoord").value;  //get value from input box
+        // first handle different types of line breaks:
+        inputText = inputText.replace(/(\r\n|\n|\r)/gm, "\n");
+        // ======= starts from here ======== ======== ======== ======== ======== ======== ======== ========
+        //count how many line breaks at the tail of input text:
+        var count_LB = 0;
+        for (var i = 1; i < inputText.length; i++) {   // count the line breaks(LB) to remove
+            if (inputText[inputText.length - i] == '\n') {
+                count_LB += 1;
+            } else {
+                break;
+            }
+        }
+        //gen list of coordinates, remove the /n in tail.
+        var list_coord = inputText.split("\n");   //each item in list_coord is a vector
+        for (i = 0; i > -count_LB; i--) {
+            list_coord.pop();
+        }
+
+        var NN = list_coord.length;    // number of sample nodes
+        // console.info('NN:', NN);
+        // console.info('list_coord:', list_coord);
+        var vec_dict = {};  //dict of vectors for each sample
+        for (i = 0; i < NN; i++) {   // convert from str to list of float
+            // vec_dict[i] = list_coord[i].match(/\d+(?:\.\d+)?/g).map(Number);  // this does not convert minus number
+            // var array = list_coord[i].split(',')
+            vec_dict[i] = list_coord[i].split(',').map(Number);
+        }
+        // console.info('vec_dict', vec_dict)
+
+
+        var height = 500;
+        var width = 500;
+
+        //draw in canvas
+        var stage = new Konva.Stage({
+            container: 'myCanvas',
+            width: height,
+            height: height
+        });
+
+        ////---------  Draw axis -------------/////
+        var layer_arr = new Konva.Layer();
+        var arrow0 = new Konva.Arrow({
+            x: 0,
+            y: stage.height() / 2,
+            points: [0, 0, width, 0],
+            pointerLength: 20,
+            pointerWidth: 20,
+            fill: 'black',
+            stroke: 'black',
+            strokeWidth: 1,
+        });
+        layer_arr.add(arrow0);
+        var arrow1 = new Konva.Arrow({
+            x: 0,
+            y: 0,
+            points: [width / 2, height, width / 2, 0],
+            pointerLength: 20,
+            pointerWidth: 20,
+            fill: 'black',
+            stroke: 'black',
+            strokeWidth: 1,
+        });
+        layer_arr.add(arrow1);
+        stage.add(layer_arr);
+
+        ////---------  Draw points -------------/////
+        var layer = new Konva.Layer();
+
+        //three variabels
+        var x_i;
+        var y_i;
+        var node_label;
+
+        // two check vars
+        var mark_at0 = document.getElementById("label_at0").checked;
+        var mark_at1 = document.getElementById("label_at1").checked;
+        if (mark_at1 == 1 || mark_at1 == true) {
+            var label_off = 1;
+        } else {
+            var label_off = 0;
+        }
+
+        for (i = 0; i < NN; i++) {   // convert from str to list of float
+            // vec_dict[i] = list_coord[i].match(/\d+(?:\.\d+)?/g).map(Number);
+            x_i = stage.width() / 2 + vec_dict[i][0] * (stage.width() / 2) / 2;
+            y_i = stage.height() / 2 - vec_dict[i][1] * (stage.height() / 2) / 2;
+            node_label = (i + label_off).toString()
+            var oval = new Konva.Ellipse({
+                x: x_i,
+                y: y_i,
+                radiusX: 6,
+                radiusY: 6,
+                fill: '#33cccc',
+                stroke: 'black',
+                strokeWidth: 1
+            });
+            var simpleText = new Konva.Text({
+                x: x_i - 3,
+                y: y_i - 4,
+                text: node_label,
+                fontSize: 10,
+                fontFamily: 'Calibri',
+                fill: 'black'
+            });
+            layer.add(oval);
+            layer.add(simpleText);
+        }
+        ////---------  Axis -------------/////
+        // var arrow = new Konva.Arrow({
+        //     x: stage.width(),
+        //     y: stage.height(),
+        //     points: [0, 0, width / 2, height / 2],
+        //     pointerLength: 20,
+        //     pointerWidth: 20,
+        //     fill: 'black',
+        //     stroke: 'black',
+        //     strokeWidth: 4
+        // });
+        // layer_arr.add(arrow);
+        ////---------  Draw -------------/////
+        stage.add(layer);
+
+
+
+    };
+
+
+</script>
+
+
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<!--<script src="js/jquery-slim.min.js"></script>-->
+<!--<script src="js/popper.min.js"></script>-->
+<!--<script src="js/bootstrap.min.js"></script>-->
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+
+<!-- Default Statcounter code for lt_waterhand https://lt.waterhand.xyz -->
+		<script type="text/javascript">
+			var sc_project=12240495;
+var sc_invisible=1;
+var sc_security="eda3e689";
+var sc_https=1;
+var sc_remove_link=1;
+		</script>
+		<script type="text/javascript"
+			src="https://www.statcounter.com/counter/counter.js" async></script>
+		<noscript><div class="statcounter"><img class="statcounter"
+							src="https://c.statcounter.com/12240495/0/eda3e689/1/" alt="Web Analytics Made
+							Easy - StatCounter"></div></noscript>
+<!-- End of Statcounter Code -->
+</body>
+</html>

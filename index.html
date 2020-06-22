@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<link rel="stylesheet" href="LT_Gen_files/style.css" type="text/css" media="all">
+		<link rel="icon" type="image/png" href="LT_Gen_files/favicon.png">
+
+		<title>Leading Tree Generation Tool</title>
+		<script type="text/javascript">
+			// function
+
+		</script>
+		<script async="" type="text/javascript" src="LT_Gen_files/nneigh_gen.js"></script>
+		<script async="" type="text/javascript" src="LT_Gen_files/clipped.js"></script>
+	</head>
+
+	<body>
+		<h1>Density based Leading Tree Generation Tool</h1>
+		<p><strong>Density based Leading Tree</strong> (DBLT) is proposed by Dr. J.Xu on 2016 in CQUPT. It's a very powerful
+		tool
+		for revealing the underlying hierarchical distribution properties in data points.
+		</p>
+		<p>This tool generates the DBLT and prints out all the directed edges in that DBLT.</p>
+		<h5 style="margin-block-end: 0; margin-block-start:10px; ">Tips:</h5>
+			<ul style="margin-block-start: .2em;">
+				<li>Another useful tool
+		that <a href="https://www.mobilefish.com/services/record_mouse_coordinates/record_mouse_coordinates.php"
+			target="_blank">
+			records the coordinates of mouse click</a> is recommended for using with this web tool.</li>
+				<li>If you prefer 2D dimensional vectors, we offer a small tool for <a href="plot2d_index.html" target="_blank">
+			visualizing the 2D sample points!</a></li>
+			</ul>
+		<p></p>
+
+		<div id="instructions">
+			<h2>How to use this tool:</h2>
+			<p>It takes just three easy steps to use this tool to generate DBLT from vectors.</p>
+			<!--        <p>0.1,0.2,0.3,0.9<br>0.9,0.3,0.5,0.7<br>0.2,0.1,0.4,0.6<br>-->
+			<!--    </p>-->
+			<ol>
+				<li>Paste the vectors of your samples into the text box below.</li>
+				<li>Choose to either cosine distance or Euclidean distance for density calculation.</li>
+				<li>Click the <em>Generate!</em> button and your DBLT will be automatically generated.</li>
+				<li>Check out the visualization of the DBLT by clicking the <em>Visualize the Tree</em> button.</li>
+			</ol>
+		</div>
+		<!---->
+
+		<h1>Leading Tree Generating</h1>
+		<p>Input the vectors below. ONE line per vector. Coordinates are delimited by comma!</p>
+		<p class="flat"><input type="radio" id="cosDist" name="paragraphs" value="yes" checked="checked"> Use cosine distance
+		</p>
+		<p class="flat"><input type="radio" id="eucDist" name="paragraphs" value="no"> Use Euclidean distance</p>
+		<p>percent for dc selection:<input id="p_dc" name="p_dc" type="number" value="20" min="1" max="99" style="width: 3em;">%</p>
+
+		<p><textarea id="inputCoord" name="coordinates_box" rows="12" cols="18">0.1,0.2,0.3,0.9
+0.9,0.3,0.5,0.7
+0.2,0.1,0.4,0.6</textarea></p>
+		<p><input type="button"
+			  name="Parsing-Line-Coord"
+			  value="Generate!"
+			  onclick="javascript:coordParsing()"
+			  class="subbtn">
+		<input type="button" name="clearCoord" id="clearCoord" value="Reset" class="rstbtn"></p>
+
+		<h1>Leading Tree Generating Results</h1>
+		<p><textarea id="outputCoord" name="outputCoord_box" rows="12" cols="18"></textarea></p>
+		<p>
+		<input type="button" name="copyClip" id="copyClip" value="Copy to Clipboard" class="actbtn"
+											     data-clipboard-target="#outputCoord" style="">
+
+		<input type="button" name="vis" id="vis" value="Visualize the Tree" class="actbtn"
+										    onclick="NewTab_LT_vis()" style="">
+		<!--           onclick="window.location.href = 'tree_vis/vis_tree.html';"-->
+		</p>
+
+		<script>
+			function NewTab_LT_vis() {
+				window.open(
+					"tree_vis/vis_tree.html", "_blank");
+			}
+		</script>
+		<!--    -->
+		<!--  coord ends here  -->
+		<!--    -->
+		<!--    -->
+
+		<!--    <h2>Remove Line Breaks</h2>-->
+		<!--    <p>Paste your text in the box below and then click the button.</p>-->
+		<!--    <p>The new text will appear in the box at the bottom of the page.</p>-->
+		<!--    <p class="flat"><input type="radio" id="paragraphs" name="paragraphs" value="no"> Remove line-->
+		<!--        breaks only</p>-->
+		<!--    <p class="flat"><input type="radio" id="noparagraphs" name="paragraphs" value="no"> Remove line breaks and paragraph-->
+		<!--        breaks</p>-->
+
+		<!--    <p><textarea id="oldText" name="oldText" rows="12" cols="36"></textarea></p>-->
+
+		<!--    <p><input type="button" name="Remove-Line-Breaks" value="Remove Line Breaks" onclick="javascript:removeBreaks()"-->
+		<!--              class="subbtn">-->
+		<!--        <input type="button" name="clearText" id="clearText" value="Reset" class="rstbtn"></p>-->
+
+		<!--    <h2>New Text without Line Breaks</h2>-->
+		<!--    <p class="flat">Copy your new text without line breaks from the box below.</p>-->
+		<!--    <p><textarea id="newText" name="newText" rows="12" cols="36"></textarea>-->
+		<!--    </p>-->
+		<!--    <p>-->
+		<!--        <input type="button" name="copyClip" id="copyClip" value="Copy to Clipboard" class="actbtn"-->
+		<!--               data-clipboard-target="#newText" style="">-->
+		<!--    </p>-->
+		<p><br></p>
+		<h2>Reference</h2>
+		<p> J. Xu, G. Wang, and W. Deng, “DenPEHC: Density peak based efficient hierarchical clustering,” Information Sciences,
+		vol. 373, pp. 200–218, 2016.</p>
+		<p><br></p>
+		<p><br></p>
+
+		<!--ClustrMaps-->
+		<script type="text/javascript" id="clustrmaps" src="//cdn.clustrmaps.com/map_v2.js?cl=ffffff&w=300&t=tt&d=GQ0-Vo3bXMXPSOBbYE7mwPJZDxZolcWYfPq4rHtGY2c&co=2d78ad&ct=b3adad&cmo=ffa6a6&cmn=ff0000"></script>
+		<!--ClustrMaps end-->
+
+
+<!-- Default Statcounter code for lt_waterhand https://lt.waterhand.xyz -->
+		<script type="text/javascript">
+			var sc_project=12240495; 
+var sc_invisible=1; 
+var sc_security="eda3e689"; 
+var sc_https=1; 
+var sc_remove_link=1; 
+		</script>
+		<script type="text/javascript"
+			src="https://www.statcounter.com/counter/counter.js" async></script>
+		<noscript><div class="statcounter"><img class="statcounter"
+							src="https://c.statcounter.com/12240495/0/eda3e689/1/" alt="Web Analytics Made
+							Easy - StatCounter"></div></noscript>
+<!-- End of Statcounter Code -->
+		<p><br></p>
+
+	</body>
+</html>

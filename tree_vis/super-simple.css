@@ -1,0 +1,65 @@
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, textarea, p, blockquote, th, td {
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    background: #fff;
+}
+
+/* optional Container STYLES */
+.chart {
+    height: 159px;
+    width: 332px;
+    margin: 5px;
+    margin: 5px auto;
+    border: 3px solid #DDD;
+    border-radius: 3px;
+}
+
+.node {
+    color: #9CB5ED;
+    border: 2px solid #C8C8C8;
+    border-radius: 3px;
+}
+
+.node p {
+    font-size: 20px;
+    line-height: 20px;
+    height: 20px;
+    font-weight: bold;
+    padding: 3px;
+    margin: 0;
+}
+
+.myButton {
+    /*margin-left: 4em;*/
+    margin-bottom: 2em;
+    position:relative;
+    left:40%;
+
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:linear-gradient(to bottom, #ffffff 5%, #f6f6f6 100%);
+	background-color:#ffffff;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+}
+.myButton:hover {
+	background:linear-gradient(to bottom, #f6f6f6 5%, #ffffff 100%);
+	background-color:#f6f6f6;
+}
+.myButton:active {
+	position:relative;
+	top:1px;
+
+}
